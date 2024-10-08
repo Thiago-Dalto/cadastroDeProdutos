@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Usuários</title>
+    <link rel="stylesheet" href="styles.css"> 
+</head>
+<body>
+    <header>
+        <h1>Gerenciador de Usuários</h1>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2>Adicionar Usuário</h2>
+            <form action="#" method="POST" th:action="@{/usuarios}" th:object="${usuario}">
+                <label for="nome">Nome:</label>
+                <input type="text" id="nome" name="nome" required>
+
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" name="email" required>
+
+                <button type="submit">Adicionar</button>
+            </form>
+        </section>
+
+        <section class="table-section">
+            <h2>Lista de Usuários</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.id}"></td>
+                        <td th:text="${usuario.nome}"></td>
+                        <td th:text="${usuario.email}"></td>
+                        <td>
+                            <button type="button" th:onclick="'deleteUser(' + ${usuario.id} + ')'">Excluir</button>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Gerenciador de Usuários</p>
+    </footer>
+
+    <script>
+        function deleteUser(id) {
+            // Função para deletar o usuário
+            if (confirm('Tem certeza que deseja excluir este usuário?')) {
+                // Aqui você pode adicionar a lógica para excluir o usuário
+                // Exemplo: fazer uma chamada AJAX para o servidor
+                alert('Usuário com ID ' + id + ' excluído.');
+            }
+        }
+    </script>
+</body>
+</html>
