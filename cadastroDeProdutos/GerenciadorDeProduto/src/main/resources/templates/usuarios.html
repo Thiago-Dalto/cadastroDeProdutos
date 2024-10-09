@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gerenciador de Usuários</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: pink;
+            margin: 0;
+            padding: 0;
+        }
+
+        header {
+            background-color: pink;
+            color: black;
+            text-align: center;
+            padding: 1rem;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        main {
+            max-width: 900px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: pink;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 10px;
+        }
+
+        .form-section, .table-section {
+            margin-bottom: 2rem;
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+        }
+
+        label {
+            font-weight: bold;
+        }
+
+        input[type="text"], input[type="email"], input[type="tel"], select {
+            width: 100%;
+            padding: 0.5rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+
+        button[type="submit"] {
+            grid-column: 1 / span 2;
+            background-color: brown;
+            color: white;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+        button[type="submit"]:hover {
+            background-color: darkred;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th, td {
+            padding: 1rem;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: pink;
+            font-weight: bold;
+        }
+
+        .button-group {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        .button-group a, .button-group button {
+            display: inline-block;
+            width: 80px;
+            padding: 0.5rem;
+            text-align: center;
+            border-radius: 5px;
+            font-size: 1rem;
+            color: white;
+            cursor: pointer;
+            transition: background-color 0.3s;
+            border: none;
+        }
+
+        a.edit-button {
+            background-color: brown;
+            text-decoration: none;
+        }
+
+        a.edit-button:hover {
+            background-color: darkred;
+        }
+
+        button.delete-button {
+            background-color: brown;
+        }
+
+        button.delete-button:hover {
+            background-color: brown;
+        }
+
+        footer {
+            text-align: center;
+            padding: 1rem;
+            background-color: pink;
+            color: white;
+            margin-top: 2rem;
+        }
+
+    </style>
+</head>
+<body>
+    <header>
+        <h1>Gerenciador de Usuários</h1>
+    </header>
+
+    <main>
+        <section class="form-section">
+            <h2 th:text="${usuario.id} == null ? 'Adicionar Usuário' : 'Editar Usuário'">Adicionar Usuário</h2>
+            <!-- Se o usuário já existir, ele é editado, senão, é criado um novo -->
+            <form th:action="@{${usuario.id == null} ? '/usuarios' : '/usuarios/editar/' + ${usuario.id}}" method="post" th:object="${usuario}">
+                <div>
+                    <label for="nome">Nome:</label>
+                    <input type="text" id="nome" name="nome" th:value="${usuario.nome}" placeholder="Digite o nome completo" required>
+                </div>
+                <div>
+                    <label for="email">E-mail:</label>
+                    <input type="email" id="email" name="email" th:value="${usuario.email}" placeholder="Digite o e-mail" required>
+                </div>
+                <div>
+                    <label for="telefone">Telefone:</label>
+                    <input type="tel" id="telefone" name="telefone" th:value="${usuario.telefone}" placeholder="Digite o telefone" required>
+                </div>
+                <div>
+                    <label for="tipoUsuario">Tipo de Usuário:</label>
+                    <select id="tipoUsuario" name="tipoUsuario" required>
+                        <option value="" disabled>Selecione o tipo de usuário</option>
+                        <option th:value="ADMIN" th:selected="${usuario.tipoUsuario == 'ADMIN'}">Admin</option>
+                        <option th:value="GERENTE" th:selected="${usuario.tipoUsuario == 'GERENTE'}">Gerente</option>
+                        <option th:value="FUNCIONARIO" th:selected="${usuario.tipoUsuario == 'FUNCIONARIO'}">Funcionário</option>
+                        <option th:value="ALUNO" th:selected="${usuario.tipoUsuario == 'ALUNO'}">Aluno</option>
+                    </select>
+                </div>
+
+                <button type="submit" th:text="${usuario.id} == null ? 'Adicionar Usuário' : 'Salvar Alterações'"></button>
+            </form>
+        </section>
+
+        <section class="table-section">
+            <h2>Lista de Usuários</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Nome</th>
+                        <th>E-mail</th>
+                        <th>Telefone</th>
+                        <th>Tipo de Usuário</th>
+                        <th>Ações</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr th:each="usuario : ${usuarios}">
+                        <td th:text="${usuario.id}"></td>
+                        <td th:text="${usuario.nome}"></td>
+                        <td th:text="${usuario.email}"></td>
+                        <td th:text="${usuario.telefone}"></td>
+                        <td th:text="${usuario.tipoUsuario}"></td>
+                        <td>
+                            <div class="button-group">
+                                <a th:href="@{/usuarios/editar/{id}(id=${usuario.id})}" class="edit-button">Editar</a>
+                                <form th:action="@{/usuarios/excluir/{id}(id=${usuario.id})}" method="post" style="display:inline;">
+                                    <button type="submit" class="delete-button" onclick="return confirm('Tem certeza que deseja excluir este usuário?');">Excluir</button>
+                                </form>
+                            </div>
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; 2024 Gerenciador de Usuários</p>
+    </footer>
+</body>
+</html>
